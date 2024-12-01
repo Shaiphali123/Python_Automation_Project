@@ -21,7 +21,7 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 // Run unit tests and generate coverage reports
-                sh 'pytest --cov=app --cov-report=term tests/'
+                sh 'pytest --cov=app --cov-report=term'
             }
         }
     }
