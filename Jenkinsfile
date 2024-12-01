@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         GIT_URL = 'https://github.com/Shaiphali123/Python_Automation_Project.git'
+        PATH = 'C://Users//91912//AppData//Local//Programs//Python//Python312//Lib//site-packages//pip'
     }
 
     stages {
