@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import jwt
 
-from constants import ALGORITHM, SECRET_KEY
+from app.constants import ALGORITHM, SECRET_KEY
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
@@ -14,3 +14,4 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
