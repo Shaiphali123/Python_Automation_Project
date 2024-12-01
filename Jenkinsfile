@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GIT_URL = 'https://github.com/Shaiphali123/Python_Automation_Project.git'  // Replace with your Git repository URL
+        GIT_URL = 'https://github.com/Shaiphali123/Python_Automation_Project.git'
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install dependencies
-                bat 'pip install -r requirements.txt'
+                bat ' C:\Users\91912\AppData\Local\Programs\Python\Python312\Scripts\pip.exe install -r requirements.txt'
             }
         }
         stage('Run Unit Tests') {
