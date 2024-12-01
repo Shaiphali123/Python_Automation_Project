@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    environment {
+        GIT_URL = 'https://github.com/Shaiphali123/Python_Automation_Project.git'  // Replace with your Git repository URL
+    }
+
     stages {
         stage('Checkout') {
             steps {
