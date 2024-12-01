@@ -15,7 +15,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install dependencies
-                bat ' C:\Users\91912\AppData\Local\Programs\Python\Python312\Scripts\pip.exe install -r requirements.txt'
+                bat ' pip install -r requirements.txt'
             }
         }
         stage('Run Unit Tests') {
