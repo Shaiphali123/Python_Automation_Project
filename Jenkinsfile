@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Pull code from Git
-                git branch: 'main'
+                git branch: 'main', url: "${GIT_URL}"
             }
         }
         stage('Install Dependencies') {
