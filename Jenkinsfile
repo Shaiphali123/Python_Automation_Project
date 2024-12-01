@@ -5,10 +5,6 @@ pipeline {
         GIT_URL = 'https://github.com/Shaiphali123/Python_Automation_Project.git'  // Replace with your Git repository URL
     }
 
-    tools {
-        git 'Git'  // Ensure Jenkins uses the correct Git installation
-    }
-
     stages {
         stage('Checkout') {
             steps {
