@@ -17,16 +17,14 @@ Running the Tests
 1. Install Dependencies
 First, make sure to install all required dependencies by running the following command:
 
-bash
-Copy code
+
 pip install -r requirements.txt
 This will install the necessary packages, including pytest, pytest-cov, pytest-html, and FastAPI.
 
 2. Run Unit Tests
 Unit tests are designed to test individual components. To run the unit tests and check for code coverage, use the following command:
 
-bash
-Copy code
+
 pytest --cov=your_module_name --cov-report=html --html=report.html
 This command will:
 
