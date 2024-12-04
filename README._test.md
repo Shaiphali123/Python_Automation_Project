@@ -1,28 +1,79 @@
-1) Unit Tests
+Bookstore API - Unit and Integration Testing
+Project Overview
+This project is a simple Bookstore API built with FastAPI. It allows users to manage books and perform user authentication, including sign-up and login functionalities. The API uses JWT tokens for securing endpoints related to book management.
 
-Unit testing focuses on testing individual components or functions of the application in isolation to ensure they work as expected. The approach to writing unit tests for this project includes:
+Testing Strategy
+1. Unit Testing
+Unit tests are written to ensure individual components of the API work as expected. The main focus is to test functions, methods, and services in isolation from external dependencies like databases or APIs.
 
-Test Coverage: Each function or method that contains business logic is tested. For example, we ensure that user authentication, book management, and database operations work independently.
-Mocks & Stubs: External dependencies, such as the database or third-party services, are mocked or stubbed out to test components in isolation. This ensures that unit tests are focused on specific functionality and do not require external systems.
-Assertions: Each unit test includes assertions that verify the expected outputs based on the given inputs. For example, testing the response from the book creation API to check if the data is correctly added to the database.
-Example Unit Test:
+Authentication Tests: Testing user authentication such as login and signup.
+Book Management Tests: Testing CRUD operations for book management.
+2. Integration Testing
+Integration tests ensure that different parts of the application work together as expected. These tests simulate real-world API usage and validate interactions between multiple components, like database, routes, and services.
+
+Book Management API Endpoints: Testing the interaction between routes and the database for adding, updating, deleting, and retrieving books.
+JWT Token Authentication: Testing access control for secured endpoints, ensuring only authenticated users can interact with book management.
+Running the Tests
+1. Install Dependencies
+First, make sure to install all required dependencies by running the following command:
+
+bash
+Copy code
+pip install -r requirements.txt
+This will install the necessary packages, including pytest, pytest-cov, pytest-html, and FastAPI.
+
+2. Run Unit Tests
+Unit tests are designed to test individual components. To run the unit tests and check for code coverage, use the following command:
+
+bash
+Copy code
+pytest --cov=your_module_name --cov-report=html --html=report.html
+This command will:
+
+Run all unit tests.
+Generate a code coverage report in htmlcov/ directory.
+Generate an HTML report of the test results in report.html.
+3. Run Unit and Integration Tests
+To run both unit and integration tests, ensuring that interactions between components are properly tested, use:
 
 
-def test_create_book():
-    book = create_book(name="Test Book", author="Test Author", published_year=2024)
-    assert book.name == "Test Book"
-    assert book.author == "Test Author"
-    assert book.published_year == 2024
+pytest tests/ --cov=your_module_name --cov-report=html --html=report.html
+This will:
 
-2) Integration Tests
+Run all tests in the tests/ directory (including unit and integration tests).
+Generate both the code coverage report and HTML test report.
 
-Integration testing focuses on testing how various parts of the system interact with each other, such as the communication between APIs, database, and the overall flow of the application.
+4. View Reports
+The code coverage report can be found in the htmlcov/index.html file. Open it in your browser to view which parts of your code are covered by the tests.
+The test result report can be found in the report.html file.
 
-API Endpoints: Each API endpoint is tested to ensure it behaves as expected, handles edge cases correctly, and returns the correct status codes (e.g., 200 OK, 201 Created, 400 Bad Request).
-Authentication & Authorization: Since many endpoints require user authentication, integration tests are written to ensure that valid and invalid tokens are properly handled, and that protected resources return the correct status codes (e.g., 403 Forbidden for unauthorized access).
-Database Integration: For APIs that interact with the database, integration tests ensure data is being correctly created, read, updated, and deleted (CRUD operations).
-Example Integration Test:
+5. Fixtures for Testing
 
+JWT Token Fixture: A fixture is used to generate a JWT token for authenticating user-related endpoints.
+Test Client: The tests use a FastAPI test client (TestClient) to send HTTP requests to the API and receive responses for verification.
+Example of a Fixture to Get an Access Token:
+
+@pytest.fixture(scope="session")
+def access_token(client):
+    user_credentials = {"email": "test@example.com", "password": "password123"}
+    response = client.post("/login", json=user_credentials)
+    assert response.status_code == 200
+    token = response.json().get("access_token")
+    assert token is not None
+    return token
+
+
+Example of Unit and Integration Tests
+Unit Test Example:
+
+def test_user_signup(client):
+    user_data = {"email": "newuser@example.com", "password": "password123"}
+    response = client.post("/signup", json=user_data)
+    assert response.status_code == 201
+    assert response.json() == {"message": "User created successfully"}
+
+
+Integration Test Example:
 
 def test_book_management(client, access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -37,32 +88,18 @@ def test_book_management(client, access_token):
     response_data = response.json()
     assert "id" in response_data
     assert response_data["name"] == new_book["name"]
+    assert response_data["author"] == new_book["author"]
 
 
-Ensuring Test Reliability and Maintainability
+6. Challenges Faced
+JWT Token Management: Ensuring that authentication tokens are generated and validated correctly was a critical part of securing endpoints. We created fixtures to handle token generation and passing the token to test protected routes.
 
-To ensure the tests are reliable and maintainable, the following strategies have been implemented:
+Database Cleanup: During testing, ensuring that the database is cleaned between tests to avoid data leakage was a challenge. Using database transactions for each test and rolling back at the end of the test was a solution we used.
 
-Modular Test Design: Tests are written in a modular manner to isolate functionality and prevent code duplication. Reusable fixtures, such as the access_token fixture, are used to generate test data or authentication tokens across multiple tests.
-Continuous Integration: All tests are integrated with a continuous integration (CI) pipeline (e.g., Jenkins or GitHub Actions), which ensures that tests are automatically run whenever new code is pushed to the repository. This helps to catch issues early and maintain code quality.
-Clear Test Naming: Tests are named clearly to describe their purpose, making it easy to understand what functionality is being tested (e.g., test_create_book, test_user_authentication).
-Mocking External Dependencies: External systems (like the database or third-party services) are mocked in unit tests to ensure tests run quickly and do not depend on external systems, making them reliable and isolated.
-Test Coverage: Test coverage tools (like pytest-cov) are used to ensure that critical paths of the code are tested. Coverage reports help identify areas that are not fully tested and need more attention.
-4). Challenges and Solutions
-While working on this project, I encountered several challenges, and here's how I addressed them:
-
-Challenge 1: Handling Authentication in Tests
-
-Solution: Since many of the APIs require authentication via JWT tokens, I created a fixture to handle login and retrieve the access token. This allowed me to easily pass the token into each test case that needed authenticated requests.
-Challenge 2: Managing Database State During Tests
-
-Solution: To prevent tests from interfering with each other, I created isolated test databases using test fixtures. The database is populated with known data before each test, and cleaned up after each test run.
-Challenge 3: Dealing with External API Dependencies
-
-Solution: For API endpoints that interact with external services, I used mocking libraries like unittest.mock to simulate the external API responses. This allowed the tests to be self-contained and not rely on third-party services.
-Challenge 4: Handling Rate Limiting or Slow Responses in Integration Tests
-
-Solution: I implemented timeouts and retries in the API calls to ensure the tests are resilient and do not fail due to temporary issues. This helps maintain test reliability even when there are network delays or rate-limited requests.
 Conclusion
-The overall strategy for testing this project revolves around writing clear, reliable, and maintainable tests that validate both the individual components of the application (unit tests) and the interactions between them (integration tests). By ensuring good test coverage, using fixtures to reduce duplication, and leveraging continuous integration, the tests provide confidence that the application is functioning as expected across different environments.
+This Bookstore API includes comprehensive unit and integration testing to ensure the functionality and security of the application. By running the tests locally, you can verify both individual components and their integrations with the database, ensuring a reliable and secure API.
+
+GitHub Repository
+https://github.com/Shaiphali123/Python_Automation_Project/tree/main
+
 
