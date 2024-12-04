@@ -11,13 +11,13 @@ from app.main import create_user_signup, login_for_access_token
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Mock database session
+
 @pytest.fixture
 def mock_db():
     return MagicMock(spec=Session)
 
 
-# Test user signup
+
 @pytest.mark.anyio
 async def test_create_user_signup(mock_db):
     # Mock existing user
